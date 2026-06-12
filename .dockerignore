@@ -1,0 +1,50 @@
+# VCS and local environments
+.git/
+AiEnv/
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local env and secrets
+.env
+.env.*
+!.env.example
+!deploy/.env.production.example
+
+# Runtime logs and generated data
+history.log
+*.log
+*.log.*
+*.jsonl
+docs/history/
+data/chroma/
+data/cache/
+data/exports/
+
+# Editor and OS junk
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Build and temp artifacts
+dist/
+build/
+*.egg-info/
+*.tmp
+*.temp
+
+# Non-runtime docs and planning files
+docs/questions/
+plan/
+Study/
+prompt/
+

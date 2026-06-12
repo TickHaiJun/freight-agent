@@ -1,0 +1,63 @@
+# Secrets and local env
+.env
+.env.*
+!.env.example
+!**/.env*.example
+deploy/.env.production
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+AiEnv/
+.venv/
+venv/
+env/
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Runtime logs
+history.log
+*.log
+*.log.*
+*.jsonl
+docs/history/
+
+# Docker and deployment local artifacts
+docker-compose.override.yml
+deploy/nginx/certs/
+deploy/nginx/*.pem
+deploy/nginx/*.key
+
+# RAG generated data
+data/chroma/
+data/cache/
+data/exports/
+
+# Archives and temp files
+*.zip
+*.tmp
+*.temp
+
+# Keep important source docs and project docs tracked
+!data/docs/
+!data/docs/**
+!docs/
+!docs/**
+!plan/
+!plan/**

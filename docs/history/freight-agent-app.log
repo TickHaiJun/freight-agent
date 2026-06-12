@@ -1,0 +1,11 @@
+2026-06-11 14:37:42,668 INFO [verification] verification log line
+2026-06-11 14:38:06,648 INFO [verification] verification log line 2
+2026-06-11 14:38:35,971 INFO [verification] structured_test | event=structured_test | intent=rate_query | mdg=lax | request_id=r1 | session_id=s1 | sfg=pvg
+2026-06-11 14:39:08,302 INFO [verification] structured_test_flush | event=structured_test_flush | intent=rag | request_id=r2 | session_id=s2
+2026-06-11 14:44:56,075 INFO [main] request_started | event=request_started | client_ip=192.168.0.45 | http_method=POST | message_text=你好 | path=/api/chat | request_id=req_222d9d8de886 | reset_quote_context=False | session_id=web_1779081060695_hs5pfdgd
+2026-06-11 14:44:56,343 INFO [graph.nodes] intent_node rule hit | greeting=true | last_message=你好
+2026-06-11 14:44:56,344 INFO [graph.nodes] node intent finished | elapsed=0.002s | intent=support_info
+2026-06-11 14:44:56,347 INFO [graph.nodes] node support_info finished | elapsed=0.000s | kind=greeting
+2026-06-11 14:44:56,402 INFO [graph.nodes] support_info_selected | event=support_info_selected | elapsed_ms=54.24 | message_text=你好 | request_id=req_222d9d8de886 | session_id=web_1779081060695_hs5pfdgd | support_info_kind=greeting
+2026-06-11 14:44:56,406 INFO [main] agent_finished | event=agent_finished | elapsed_ms=293.06 | intent=support_info | missing_slots=[] | multi_origin=False | query_completed=False | query_ready=False | quote_count_exact=0 | quote_count_similar=0 | quote_count_total=0 | request_id=req_222d9d8de886 | retrieved_doc_sources=[] | retrieved_docs_count=0 | session_id=web_1779081060695_hs5pfdgd | support_info_kind=greeting
+2026-06-11 14:44:58,143 INFO [main] request_completed | event=request_completed | intent=support_info | multi_origin=False | quote_count_exact=0 | quote_count_similar=0 | quote_count_total=0 | request_id=req_222d9d8de886 | retrieved_doc_sources=[] | retrieved_docs_count=0 | session_id=web_1779081060695_hs5pfdgd | stream_completed=True | total_elapsed_ms=2082.04

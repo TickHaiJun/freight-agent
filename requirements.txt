@@ -1,0 +1,20 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic-settings
+langchain
+langchain-text-splitters
+langchain-chroma
+langchain-openai
+langgraph
+httpx
+sse-starlette
+chromadb
+rank-bm25
+python-docx
+python-pptx
+pypdf
+pdfplumber
+tiktoken
+orjson
+pywin32; sys_platform == "win32"

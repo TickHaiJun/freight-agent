@@ -1,0 +1,50 @@
+services:
+  freight-agent-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: freight-agent-app:latest
+    container_name: freight-agent-app
+    restart: unless-stopped
+    env_file:
+      - ./deploy/.env.production
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/docs:/app/data/docs
+      - ./data/chroma:/app/data/chroma
+      - ./data/cache:/app/data/cache
+      - ./data/exports:/app/data/exports
+      - /data/logs/freight-agent:/app/runtime/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8012/health', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - freight-agent-net
+
+  freight-agent-nginx:
+    image: nginx:1.27-alpine
+    container_name: freight-agent-nginx
+    restart: unless-stopped
+    depends_on:
+      freight-agent-app:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - freight-agent-net
+
+networks:
+  freight-agent-net:
+    driver: bridge

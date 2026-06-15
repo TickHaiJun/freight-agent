@@ -3,11 +3,14 @@ FROM python:3.10.1
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
+    PIP_DEFAULT_TIMEOUT=120 \
+    PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ \
+    PIP_TRUSTED_HOST=mirrors.aliyun.com \
     TZ=Asia/Shanghai
 
 WORKDIR /app
 
-# 保守安装编译依赖，避免少数 Python 包在 slim 镜像中缺构建环境
+# 保守安装编译依赖，避免少数 Python 包在镜像中缺构建环境
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
@@ -15,8 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt /app/requirements.txt
 
-RUN pip install --upgrade pip && \
-    pip install -r /app/requirements.txt
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    python -m pip install -r /app/requirements.txt
 
 COPY . /app
 

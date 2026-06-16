@@ -41,6 +41,25 @@ from rag.splitter import split_documents
 from rag.vector_store import add_documents, delete_by_source_file, reset_collection
 
 
+def _clear_directory_contents(directory: Path) -> None:
+    """
+    Remove every child under ``directory`` but keep the directory itself.
+
+    Docker bind mounts cannot be removed like a normal directory. Rebuild
+    should therefore clear only the mounted directory contents, otherwise
+    ``shutil.rmtree`` may fail with "Device or resource busy".
+    """
+    if not directory.exists():
+        return
+
+    for child in directory.iterdir():
+        if child.is_symlink() or child.is_file():
+            child.unlink()
+            continue
+        if child.is_dir():
+            shutil.rmtree(child)
+
+
 def _doc_paths() -> list[Path]:
     """
     收集知识库目录下所有待处理文件的路径。
@@ -236,17 +255,25 @@ def rebuild_knowledge_base() -> dict:
     """
     _ensure_dirs()
 
-    # rebuild 采用“全量清空后重建”，第一版优先保证流程清晰和结果稳定
+    # Keep the mount point itself and only clear its contents. This makes
+    # rebuild safe for Docker bind mounts such as /app/data/chroma.
     chroma_dir = Path(settings.chroma_persist_dir)
 
-    # 如果 Chroma 持久化目录存在，直接删除整个目录
+    # Removing the directory itself can fail in containers because the path
+    # is a bind-mounted host directory.
     if chroma_dir.exists():
-        shutil.rmtree(chroma_dir)
+        _clear_directory_contents(chroma_dir)
 
     # 删除 BM25 的本地缓存文件
     bm25_path = Path("data/cache/bm25.pkl")
     if bm25_path.exists():
         bm25_path.unlink()
+
+    # Drop the last exported chunk snapshot as part of a full rebuild so the
+    # next build always writes a fresh inspection artifact.
+    chunks_export_path = Path("data/exports/chunks.json")
+    if chunks_export_path.exists():
+        chunks_export_path.unlink()
 
     # 重置向量库 collection，确保内存态 / 客户端态也回到干净状态
     reset_collection()

@@ -1,8 +1,9 @@
+# syntax=docker/dockerfile:1.7
+
 FROM python:3.11-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
     PIP_DEFAULT_TIMEOUT=120 \
     PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ \
     PIP_TRUSTED_HOST=mirrors.aliyun.com \
@@ -10,15 +11,35 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# 阿里云 ECS：把 Debian 默认源替换成阿里云 ECS 内网源
+# Debian 12 / bookworm 的容器镜像通常使用 /etc/apt/sources.list.d/debian.sources
+RUN set -eux; \
+    if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
+        sed -i \
+        -e 's|http://deb.debian.org/debian|http://mirrors.cloud.aliyuncs.com/debian|g' \
+        -e 's|http://security.debian.org/debian-security|http://mirrors.cloud.aliyuncs.com/debian-security|g' \
+        -e 's|http://deb.debian.org/debian-security|http://mirrors.cloud.aliyuncs.com/debian-security|g' \
+        /etc/apt/sources.list.d/debian.sources; \
+    elif [ -f /etc/apt/sources.list ]; then \
+        sed -i \
+        -e 's|http://deb.debian.org/debian|http://mirrors.cloud.aliyuncs.com/debian|g' \
+        -e 's|http://security.debian.org/debian-security|http://mirrors.cloud.aliyuncs.com/debian-security|g' \
+        -e 's|http://deb.debian.org/debian-security|http://mirrors.cloud.aliyuncs.com/debian-security|g' \
+        /etc/apt/sources.list; \
+    fi
+
 # slim 镜像比较精简，保留编译依赖，避免部分 Python 包安装失败
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/requirements.txt
 
-RUN python -m pip install --upgrade pip setuptools wheel \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install --upgrade pip setuptools wheel \
     -i https://mirrors.aliyun.com/pypi/simple/ \
     --trusted-host mirrors.aliyun.com && \
     python -m pip install -r /app/requirements.txt \

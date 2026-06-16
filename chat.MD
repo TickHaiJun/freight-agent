@@ -72,8 +72,6 @@ GET /health
   "inputWeight": 500,
   "inputVol": 1,
   "hbrq": "2026-04-29",
-  "hbrqBegin": null,
-  "hbrqEnd": null,
   "flightType": null,
   "packageType": null,
   "cargoType": null,
@@ -92,8 +90,6 @@ GET /health
 | `inputWeight` | `number \| null` | 重量，单位 kg |
 | `inputVol` | `number \| null` | 体积，单位 CBM |
 | `hbrq` | `string \| null` | 单日期查询日期 |
-| `hbrqBegin` | `string \| null` | 区间查询开始日期 |
-| `hbrqEnd` | `string \| null` | 区间查询结束日期 |
 | `flightType` | `string \| null` | 航班类型，如直达/中转 |
 | `packageType` | `string \| null` | 包装类型，如托盘/散货 |
 | `cargoType` | `string \| null` | 货类，如普货 |
@@ -310,8 +306,6 @@ const chatState = {
     "inputWeight": null,
     "inputVol": null,
     "hbrq": null,
-    "hbrqBegin": null,
-    "hbrqEnd": null,
     "flightType": null,
     "packageType": null,
     "cargoType": null,
@@ -340,8 +334,6 @@ const chatState = {
     "inputWeight": 900,
     "inputVol": null,
     "hbrq": "2026-04-29",
-    "hbrqBegin": null,
-    "hbrqEnd": null,
     "flightType": null,
     "packageType": null,
     "cargoType": null,
@@ -380,8 +372,6 @@ const chatState = {
     "inputWeight": 900,
     "inputVol": 1,
     "hbrq": "2026-04-29",
-    "hbrqBegin": null,
-    "hbrqEnd": null,
     "flightType": null,
     "packageType": null,
     "cargoType": null,

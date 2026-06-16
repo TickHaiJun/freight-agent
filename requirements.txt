@@ -10,6 +10,7 @@ langgraph
 httpx
 sse-starlette
 chromadb
+dashscope
 rank-bm25
 python-docx
 python-pptx

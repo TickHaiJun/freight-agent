@@ -2682,14 +2682,12 @@ def tool_node(state: AgentState) -> AgentState:
         elapsed_ms=round((time.perf_counter() - started) * 1000, 2),
         tool_name="search_air_freight_rate",
         tool_status="success",
-        search_mode=filtered_result.get("search_mode"),
-        quote_count_exact=len(filtered_result.get("exact_quotes", [])),
-        quote_count_similar=len(filtered_result.get("similar_quotes", [])),
-        quote_count_total=len(filtered_result.get("quotes", []) or []),
         sfg=state.get("sfg"),
         mdg=state.get("mdg"),
         package_type=state.get("packageType"),
         cargo_type=state.get("cargoType"),
+        # 报价摘要里已经包含 search_mode / quote_count_* 等字段，
+        # 这里不要再显式传一次，避免 **kwargs 展开时出现重复关键字。
         **summarize_latest_quote_result(build_standard_quote_result(filtered_result) if filtered_result.get("quotes") else None),
     )
 

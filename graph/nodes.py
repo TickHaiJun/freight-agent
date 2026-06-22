@@ -2744,8 +2744,9 @@ def result_node(state: AgentState) -> AgentState:
         state,
         event="quote_result_generated",
         elapsed_ms=round((time.perf_counter() - started) * 1000, 2),
-        search_mode=search_mode,
         response_mode="summary_only",
+        # 报价摘要里已经包含 search_mode / quote_count_* / best_* 等字段，
+        # 这里仅补充“响应形态”这类摘要之外的上下文，避免重复关键字打断主流程。
         **summarize_latest_quote_result(build_standard_quote_result(api_result) if api_result.get("quotes") else None),
     )
 

@@ -54,6 +54,10 @@ data/exports/
 *.tmp
 *.temp
 
+
+.pem
+.key
+
 # Keep important source docs and project docs tracked
 !data/docs/
 !data/docs/**

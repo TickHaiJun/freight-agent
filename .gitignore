@@ -40,7 +40,7 @@ docs/history/
 
 # Docker and deployment local artifacts
 docker-compose.override.yml
-deploy/nginx/certs/
+
 deploy/nginx/*.pem
 deploy/nginx/*.key
 

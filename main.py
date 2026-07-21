@@ -11,6 +11,8 @@ from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
+from config import settings
+from feedback import ChatFeedbackRequest, ChatFeedbackResponse, submit_feedback
 from graph.agent import agent
 from graph.state import AgentState
 from graph.time_utils import get_current_beijing_date_str
@@ -48,7 +50,7 @@ class ChatRequest(BaseModel):
     reset_quote_context: bool = False
 
 
-def _build_context_data(final_state: AgentState) -> dict:
+def _build_context_data(final_state: AgentState, request_id: str | None = None) -> dict:
     """保持前端依赖的 context 回传协议不变。"""
     return {
         "sfg": final_state.get("sfg"),
@@ -75,6 +77,8 @@ def _build_context_data(final_state: AgentState) -> dict:
         "pending_reuse_message": final_state.get("pending_reuse_message"),
         "reuse_candidate_context": final_state.get("reuse_candidate_context"),
         "result_display_mode": final_state.get("result_display_mode"),
+        # 可选字段，旧前端忽略即可；新前端用它精确关联某一轮回答的反馈。
+        "request_id": request_id,
     }
 
 
@@ -227,7 +231,7 @@ async def chat(request: ChatRequest, http_request: Request):
 
             yield {
                 "data": json.dumps(
-                    {"type": "context", "context": _build_context_data(final_state)},
+                    {"type": "context", "context": _build_context_data(final_state, request_id)},
                     ensure_ascii=False,
                 )
             }
@@ -279,6 +283,15 @@ async def chat(request: ChatRequest, http_request: Request):
             yield {"data": json.dumps({"type": "done"})}
 
     return EventSourceResponse(generate())
+
+
+@app.post("/api/chat-feedback", response_model=ChatFeedbackResponse)
+async def chat_feedback(request: ChatFeedbackRequest) -> ChatFeedbackResponse:
+    """独立反馈接口：不影响已完成的聊天 SSE 主链路。"""
+    if not settings.chat_feedback_enabled:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="聊天反馈功能当前未启用")
+    return await submit_feedback(request)
 
 
 @app.get("/health")

@@ -10,6 +10,8 @@ services:
       - ./deploy/.env.production
     environment:
       TZ: Asia/Shanghai
+      # 反馈 JSONL 写入已挂载的容器日志目录，宿主机对应 /data/logs/freight-agent。
+      CHAT_FEEDBACK_DIR: /app/runtime/logs
     volumes:
       - ./data/docs:/app/data/docs
       - ./data/chroma:/app/data/chroma
